@@ -25,7 +25,7 @@ class Update(BasePlugin):
     def handle_joined(self, channel):
         channel.msg("%s running at %s" % (self.client.nickname, get_revision()))
         
-    def command_addfaq(self, rest, user, channel):
+    def command_update(self, rest, user, channel):
         if user.mode >= MODE_OPERATOR:
             subprocess.check_call(['git', 'pull', 'origin', 'master'], cwd=PROJECT_DIR)
             subprocess.check_call(['sudo', 'supervisorctl', 'restart', 'cmsbot'])
