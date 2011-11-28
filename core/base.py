@@ -38,6 +38,10 @@ class BaseBot(irc.IRCClient):
 
     def init_users(self):
         self.sendLine('NAMES %s' % self.factory.channel)
+        
+    def joined(self, rawchannel):
+        channel = Channel(self, rawchannel)
+        self.handle_joined(channel)
 
     def privmsg(self, rawuser, rawchannel, message):
         channel = Channel(self, rawchannel)
@@ -47,6 +51,9 @@ class BaseBot(irc.IRCClient):
         self.handle_message(user, channel, message)
         
     def handle_message(self, user, channel, message):
+        pass
+    
+    def handle_joined(self, channel):
         pass
 
     def irc_unknown(self, prefix, command, params):

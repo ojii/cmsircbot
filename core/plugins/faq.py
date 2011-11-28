@@ -4,20 +4,22 @@ from core.plugins import BasePlugin
 import os
 
 
+DB_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'faq.db'))
+
 PLUGINS = ['FAQ']
 
 class FAQ(BasePlugin):
     def __init__(self, client):
         super(FAQ, self).__init__(client)
-        if os.path.exists('faq.db'):
-            with open('faq.db', 'r') as fobj:
+        if os.path.exists(DB_PATH):
+            with open(DB_PATH, 'r') as fobj:
                 data = fobj.read()
             self.faqs = dict([line.split(':', 1) for line in data.split('\n') if line.strip()])
         else:
             self.faqs = {}
     
     def write(self):
-        with open('faq.db', 'w') as fobj:
+        with open(DB_PATH, 'w') as fobj:
             fobj.write('\n'.join([':'.join(x) for x in self.faqs.items()]))
         
     def command_addfaq(self, rest, user, channel):

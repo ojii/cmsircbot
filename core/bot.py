@@ -33,6 +33,10 @@ class CMSBot(BaseBot):
                 else:
                     command, rest = msg, ''
                 plugin.handle_command(command, rest, channel, user)
+    
+    def handle_joined(self, channel):
+        for plugin in self.plugins:
+            plugin.handle_joined(channel)
 
 
 class CMSBotFactory(protocol.ClientFactory):

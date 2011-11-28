@@ -11,3 +11,6 @@ class BasePlugin(object):
     
     def handle_message(self, message, channel, user):
         pass
+    
+    def handle_joined(self, channel):
+        pass
