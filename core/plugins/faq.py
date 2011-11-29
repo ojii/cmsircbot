@@ -37,8 +37,7 @@ class FAQ(BasePlugin):
                 channel.msg('Added FAQ entry for %r' % identifier)
 
     def command_listfaq(self, rest, user, channel):
-        for faq in self.faqs.keys():
-            channel.msg('%s' % faq)
+        channel.msg('Available FAQs: %s' % ', '.join(self.faqs.keys()))
     
     def command_faq(self, rest, user, channel):
         answer = self.faqs.get(rest, None)
