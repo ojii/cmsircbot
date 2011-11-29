@@ -27,6 +27,7 @@ class Update(BasePlugin):
         
     def command_update(self, rest, user, channel):
         if user.mode >= MODE_OPERATOR:
-            channel.msg('Updating...')
+            channel.msg('Updating (all commands disabled)...')
+            self.client.plugins = []
             subprocess.check_call(['git', 'pull', 'origin', 'master'], cwd=PROJECT_DIR)
             subprocess.check_call(['sudo', 'supervisorctl', 'restart', 'cmsbot'])
