@@ -25,7 +25,7 @@ class Channel(object):
         self.client.msg(self.name, message)
 
 
-class BaseBot(irc.IRCClient):
+class BaseBot(irc.IRCClient, object):
     def __init__(self):
         self.user_modes = {}
 
@@ -37,6 +37,9 @@ class BaseBot(irc.IRCClient):
         log.msg("BaseBot.signedOn")
         self.join(self.factory.channel)
         self.init_users()
+        
+    def msg(self, user, message, length=None):
+        irc.IRCClient.msg(self, user, unicode(message).encode('ascii', 'ignore'), length)
 
     def init_users(self):
         self.sendLine('NAMES %s' % self.factory.channel)
