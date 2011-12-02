@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.plugins import BasePlugin
+from twisted.python import log
 from twisted.web.client import getPage
 import json
 import re
@@ -17,11 +18,17 @@ def get_issue_status(issue_id, channel):
         try:
             issue = json.loads(data)
         except ValueError:
+            log.msg("Could not load JSON data: %r" % data)
+            log.err()
             channel.msg("Error looking up issue #%s" % issue_id)
             return
         channel.msg("Issue #%(number)s: %(title)s (%(state)s): %(html_url)s" % issue)
         
-    def errback(data):
+    def errback(failure):
+        try:
+            failure.raiseException()
+        except:
+            log.err()
         channel.msg("Error looking up issue #%s" % issue_id)
     getPage(ISSUES_URL_TPL % issue_id).addCallback(callback).addErrback(errback)
 

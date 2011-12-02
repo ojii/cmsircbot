@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from core.base import BaseBot
 from twisted.internet import protocol
+from twisted.python import log
 import os
 
 
@@ -14,6 +15,7 @@ class CMSBot(BaseBot):
         self.load_plugins()
         
     def load_plugins(self):
+        log.msg("CMSBot.load_plugins")
         for fname in os.listdir(PLUGIN_DIR):
             if fname.endswith('.py'):
                 modname = os.path.splitext(fname)[0]
@@ -22,6 +24,7 @@ class CMSBot(BaseBot):
                     klass = getattr(mod, klass_name)
                     plugin = klass(self)
                     self.plugins.append(plugin)
+                    log.msg("CMSBot.load_plugins: Loaded %s" % plugin)
                     
     def handle_message(self, channel, user, message):
         for plugin in self.plugins:
@@ -48,4 +51,5 @@ class CMSBotFactory(protocol.ClientFactory):
         self.command_prefix = command_prefix
 
     def clientConnectionLost(self, connector, reason):
+        log.msg("CMSBotFactory.clientConnectionLost")
         connector.connect()

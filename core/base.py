@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from twisted.python import log
 from twisted.words.protocols import irc
 
 MODE_NORMAL = 0
@@ -33,6 +34,7 @@ class BaseBot(irc.IRCClient):
         return self.factory.nickname
 
     def signedOn(self):
+        log.msg("BaseBot.signedOn")
         self.join(self.factory.channel)
         self.init_users()
 
@@ -40,6 +42,7 @@ class BaseBot(irc.IRCClient):
         self.sendLine('NAMES %s' % self.factory.channel)
         
     def joined(self, rawchannel):
+        log.msg("BaseBot.joined: %s" % rawchannel)
         channel = Channel(self, rawchannel)
         self.handle_joined(channel)
 
