@@ -29,9 +29,12 @@ class BaseBot(irc.IRCClient, object):
     def __init__(self):
         self.user_modes = {}
 
-    @property
-    def nickname(self):
+    def get_nickname(self):
         return self.factory.nickname
+    
+    def set_nickname(self, val):
+        self.factory.nickname = val
+    nickname = property(get_nickname, set_nickname)
 
     def signedOn(self):
         log.msg("BaseBot.signedOn")
