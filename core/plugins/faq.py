@@ -44,4 +44,4 @@ class FAQ(BasePlugin):
         if answer:
             channel.msg('%s: %s' % (rest, answer))
         else:
-            channel.msg('No FAQ found for %r' % rest)
+            channel.msg('No FAQ found for %r, try !listfaq to see available entries' % rest)
