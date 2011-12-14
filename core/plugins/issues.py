@@ -6,7 +6,10 @@ import json
 import re
 
 
-ISSUE_REGEX = re.compile(r'#(\d+)') 
+ISSUE_REGULAR_EXPRESSIONS = [
+    re.compile(r'#(\d+)'),
+    re.compile(r'issue (\d+)', re.I),
+] 
 
 PLUGINS = ['Issues']
 
@@ -34,7 +37,9 @@ def get_issue_status(issue_id, channel):
 
 class Issues(BasePlugin):
     def handle_message(self, message, user, channel):
-        match = ISSUE_REGEX.search(message)
-        if match:
-            number = match.group(1)
-            get_issue_status(number, channel)
+        numbers = []
+        for pattern in ISSUE_REGULAR_EXPRESSIONS:
+            for number in pattern.findall(message):
+                if number not in numbers:
+                    numbers.append(number)
+                    get_issue_status(number, channel)
