@@ -38,6 +38,8 @@ def get_issue_status(issue_id, channel):
 class Issues(BasePlugin):
     def handle_message(self, message, user, channel):
         numbers = []
+        if user.nick in ['django-cibot']:
+            return
         for pattern in ISSUE_REGULAR_EXPRESSIONS:
             for number in pattern.findall(message):
                 if number not in numbers:
