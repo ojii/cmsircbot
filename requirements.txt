@@ -1,1 +1,2 @@
-twisted
+-e git+git://github.com/ojii/ircbotframework.git#egg=ircbotframework
+PyOpenSSL

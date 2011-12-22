@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-from core.base import MODE_OPERATOR
-from core.plugins import BasePlugin
+from ircbotframework.bot import MODE_OPERATOR
+from ircbotframework.plugin import BasePlugin
 import os
 import subprocess
 
 
-PLUGINS = ['Update']
-
-PROJECT_DIR = os.path.join(os.path.dirname(__file__), '..', '..')
+PROJECT_DIR = os.path.join(os.path.dirname(__file__), '..')
 
 def get_revision():
     gitdir = os.path.join(PROJECT_DIR, '.git')
@@ -23,11 +21,10 @@ def get_revision():
 
 class Update(BasePlugin):
     def handle_joined(self, channel):
-        channel.msg("%s running at %s" % (self.client.nickname, get_revision()))
+        channel.msg("%s running at %s" % (self.protocol.nickname, get_revision()))
         
-    def command_update(self, rest, user, channel):
+    def command_update(self, rest, channel, user):
         if user.mode >= MODE_OPERATOR:
             channel.msg('Updating (all commands disabled)...')
-            self.client.plugins = []
+            self.protocol.plugins = []
             subprocess.check_call(['git', 'pull', 'origin', 'master'], cwd=PROJECT_DIR)
-            subprocess.check_call(['sudo', 'supervisorctl', 'restart', 'cmsbot'])

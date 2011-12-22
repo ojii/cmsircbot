@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-from core.base import MODE_OPERATOR
-from core.plugins import BasePlugin
+from ircbotframework.bot import MODE_OPERATOR
+from ircbotframework.plugin import BasePlugin
 import os
 
 
 DB_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'faq.db'))
 
-PLUGINS = ['FAQ']
-
 class FAQ(BasePlugin):
-    def __init__(self, client):
-        super(FAQ, self).__init__(client)
+    def __init__(self, protocol, conf):
+        super(FAQ, self).__init__(protocol, conf)
         if os.path.exists(DB_PATH):
             with open(DB_PATH, 'r') as fobj:
                 data = fobj.read()
@@ -22,7 +20,7 @@ class FAQ(BasePlugin):
         with open(DB_PATH, 'w') as fobj:
             fobj.write('\n'.join([':'.join(x) for x in self.faqs.items()]))
         
-    def command_addfaq(self, rest, user, channel):
+    def command_addfaq(self, rest, channel, user):
         if user.mode < MODE_OPERATOR:
             channel.msg("You can't add FAQs")
         elif ' ' not in rest:
@@ -36,10 +34,10 @@ class FAQ(BasePlugin):
                 self.write()
                 channel.msg('Added FAQ entry for %r' % identifier)
 
-    def command_listfaq(self, rest, user, channel):
+    def command_listfaq(self, rest, channel, user):
         channel.msg('Available FAQs: %s' % ', '.join(self.faqs.keys()))
     
-    def command_faq(self, rest, user, channel):
+    def command_faq(self, rest, channel, user):
         answer = self.faqs.get(rest, None)
         if answer:
             channel.msg('%s: %s' % (rest, answer))
