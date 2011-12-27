@@ -105,6 +105,9 @@ class Issues(BasePlugin):
 
     @routes(re.compile('/issues/(?P<secretkey>\w{32})/'))
     def webhook(self, request, secretkey):
+        if secretkey != self.secretkey:
+            log.msg("Invalid secret key")
+            return
         rawdata = cgi.escape(request.args["payload"][0])
         payload = json.loads(rawdata)
         handler = HANDLERS.get(payload.get('action', 'error'), errhandler)
