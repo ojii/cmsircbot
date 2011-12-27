@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from ircbotframework.bot import MODE_OPERATOR
-from ircbotframework.plugin import BasePlugin
+from ircbotframework.plugin import BasePlugin, RegistryDictionary
+from twisted.internet import reactor
 import os
 import subprocess
 
@@ -20,11 +21,16 @@ def get_revision():
     return head
 
 class Update(BasePlugin):
+    commands = RegistryDictionary()
+    
     def handle_joined(self, channel):
         channel.msg("%s running at %s" % (self.protocol.nickname, get_revision()))
-        
-    def command_update(self, rest, channel, user):
+    
+    @commands('update')
+    def update(self, rest, channel, user):
         if user.mode >= MODE_OPERATOR:
             channel.msg('Updating (all commands disabled)...')
             self.protocol.plugins = []
             subprocess.check_call(['git', 'pull', 'origin', 'master'], cwd=PROJECT_DIR)
+            subprocess.check_call(['env/bin/pip', 'install', '-r', 'requirements.txt'], cwd=PROJECT_DIR)
+            reactor.stop()

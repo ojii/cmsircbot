@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from ircbotframework.plugin import BasePlugin
+from ircbotframework.plugin import BasePlugin, RegistryDictionary
 from twisted.python import log
 from twisted.web.client import getPage
+import cgi
 import json
+import os
 import re
 
 
@@ -13,7 +15,64 @@ ISSUE_REGULAR_EXPRESSIONS = [
 
 ISSUES_URL_TPL = 'https://api.github.com/repos/%s/%s/issues/%s'
 
+SECRET_KEY_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), 'secretkey'))
+
+HANDLERS = RegistryDictionary()
+
+@HANDLERS('error')
+def errhandler(plugin, payload):
+    log.msg("Unknown action to webhook: %s" % payload.get('action', None))
+
+@HANDLERS('created')
+def created(plugin, payload):
+    message = '%s commented on issue #%s %r: %s' % (
+        payload['sender']['login'],
+        payload['issue']['number'],
+        payload['issue']['title'],
+        payload['issue']['url']
+    )
+    plugin.message_channel(message)
+
+@HANDLERS('closed')
+def closed(plugin, payload):
+    message = '%s closed issue #%s %r: %s' % (
+        payload['sender']['login'],
+        payload['issue']['number'],
+        payload['issue']['title'],
+        payload['issue']['url']
+    )
+    plugin.message_channel(message)
+
+@HANDLERS('opened')
+def opened(plugin, payload):
+    message = '%s reported issue #%s %r: %s' % (
+        payload['sender']['login'],
+        payload['issue']['number'],
+        payload['issue']['title'],
+        payload['issue']['url']
+    )
+    plugin.message_channel(message)
+
+@HANDLERS('reopened')
+def reopened(plugin, payload):
+    message = '%s reopened issue #%s %r: %s' % (
+        payload['sender']['login'],
+        payload['issue']['number'],
+        payload['issue']['title'],
+        payload['issue']['url']
+    )
+    plugin.message_channel(message)
+
+
 class Issues(BasePlugin):
+    routes = RegistryDictionary()
+    
+    def post_init(self):
+        self.secretkey = None
+        if os.path.exists(SECRET_KEY_FILE):
+            with open(SECRET_KEY_FILE, 'r') as fobj:
+                self.secretkey = fobj.read().strip()
+
     def handle_message(self, message, channel, user):
         numbers = []
         if user.nick in ['django-cibot']:
@@ -43,3 +102,13 @@ class Issues(BasePlugin):
             channel.msg("Error looking up issue #%s" % issue_id)
         defered = getPage(ISSUES_URL_TPL % (self.conf['GITHUB_USER'], self.conf['GITHUB_PROJECT'], issue_id))
         defered.addCallback(callback).addErrback(errback)
+
+    @routes('/issues/(?P<secretkey>\w{32})/')
+    def webhook(self, request, secretkey):
+        rawdata = cgi.escape(request.args["payload"][0])
+        payload = json.loads(rawdata)
+        handler = HANDLERS.get(payload.get('action', 'error'), errhandler)
+        try:
+            handler(self, payload)
+        except Exception, e:
+            log.err(e)
