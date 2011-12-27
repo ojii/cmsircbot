@@ -12,3 +12,6 @@ PLUGINS = [
 
 GITHUB_USER = 'divio'
 GITHUB_PROJECT = 'django-cms'
+WEBHOOKS = True
+WEBHOOK_PORT = 9876
+
