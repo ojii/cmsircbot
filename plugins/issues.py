@@ -103,7 +103,7 @@ class Issues(BasePlugin):
         defered = getPage(ISSUES_URL_TPL % (self.conf['GITHUB_USER'], self.conf['GITHUB_PROJECT'], issue_id))
         defered.addCallback(callback).addErrback(errback)
 
-    @routes('/issues/(?P<secretkey>\w{32})/')
+    @routes(re.compile('/issues/(?P<secretkey>\w{32})/'))
     def webhook(self, request, secretkey):
         rawdata = cgi.escape(request.args["payload"][0])
         payload = json.loads(rawdata)
