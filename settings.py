@@ -2,8 +2,8 @@
 
 NETWORK = 'irc.freenode.net'
 PORT = 6667
-CHANNEL = '#django-cms-test'
-NICKNAME = 'NewCMSBot'
+CHANNEL = '#django-cms'
+NICKNAME = 'CMSBot'
 PLUGINS = [
     'plugins.faq.FAQ',
     'plugins.issues.Issues',
