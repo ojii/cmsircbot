@@ -25,7 +25,7 @@ def errhandler(plugin, payload):
 
 @HANDLERS('created')
 def created(plugin, payload):
-    message = '%s commented on issue #%s %r: %s' % (
+    message = '%s commented on issue #%s "%s": %s' % (
         payload['sender']['login'],
         payload['issue']['number'],
         payload['issue']['title'],
@@ -35,7 +35,7 @@ def created(plugin, payload):
 
 @HANDLERS('closed')
 def closed(plugin, payload):
-    message = '%s closed issue #%s %r: %s' % (
+    message = '%s closed issue #%s "%s": %s' % (
         payload['sender']['login'],
         payload['issue']['number'],
         payload['issue']['title'],
@@ -45,7 +45,7 @@ def closed(plugin, payload):
 
 @HANDLERS('opened')
 def opened(plugin, payload):
-    message = '%s reported issue #%s %r: %s' % (
+    message = '%s reported issue #%s "%s": %s' % (
         payload['sender']['login'],
         payload['issue']['number'],
         payload['issue']['title'],
@@ -55,7 +55,7 @@ def opened(plugin, payload):
 
 @HANDLERS('reopened')
 def reopened(plugin, payload):
-    message = '%s reopened issue #%s %r: %s' % (
+    message = '%s reopened issue #%s "%s": %s' % (
         payload['sender']['login'],
         payload['issue']['number'],
         payload['issue']['title'],
