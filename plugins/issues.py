@@ -29,7 +29,7 @@ def created(plugin, payload):
         payload['sender']['login'],
         payload['issue']['number'],
         payload['issue']['title'],
-        payload['issue']['url']
+        payload['issue']['html_url']
     )
     plugin.message_channel(message)
 
@@ -39,7 +39,7 @@ def closed(plugin, payload):
         payload['sender']['login'],
         payload['issue']['number'],
         payload['issue']['title'],
-        payload['issue']['url']
+        payload['issue']['html_url']
     )
     plugin.message_channel(message)
 
@@ -49,7 +49,7 @@ def opened(plugin, payload):
         payload['sender']['login'],
         payload['issue']['number'],
         payload['issue']['title'],
-        payload['issue']['url']
+        payload['issue']['html_url']
     )
     plugin.message_channel(message)
 
@@ -59,7 +59,7 @@ def reopened(plugin, payload):
         payload['sender']['login'],
         payload['issue']['number'],
         payload['issue']['title'],
-        payload['issue']['url']
+        payload['issue']['html_url']
     )
     plugin.message_channel(message)
 
